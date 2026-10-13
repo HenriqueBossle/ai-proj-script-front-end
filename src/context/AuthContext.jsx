@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import api from "../api/api";
 
 export const AuthContext = createContext();
@@ -40,9 +40,41 @@ export function AuthProvider({ children }){
         checkAuthentication();
     }, []);
 
-    const login = (userData) => {
+    const setSession = (userData) => {
+        localStorage.setItem("user", JSON.stringify(userData));
         setUser(userData);
         setAuthenticated(true);
+    };
+
+    const login = async ({ email, password }) => {
+        const response = await api.post("/login", {
+            email,
+            password,
+            device_name: "react_app",
+        });
+        const { token, user: authenticatedUser } = response.data;
+
+        if (!token || !authenticatedUser) {
+            throw new Error("A resposta do login não contém os dados de autenticação esperados.");
+        }
+
+        localStorage.setItem("token", token);
+        setSession(authenticatedUser);
+    };
+
+    const register = async (userData) => {
+        const response = await api.post("/register", {
+            ...userData,
+            device_name: "react_app",
+        });
+        const { token, user: registeredUser } = response.data;
+
+        if (!token || !registeredUser) {
+            throw new Error("A resposta do cadastro não contém os dados de autenticação esperados.");
+        }
+
+        localStorage.setItem("token", token);
+        setSession(registeredUser);
     };
 
     const logout = async () => {
@@ -66,6 +98,7 @@ export function AuthProvider({ children }){
                 user,
                 loading,
                 login,
+                register,
                 logout,
             }}
         >
@@ -75,5 +108,3 @@ export function AuthProvider({ children }){
 }
 
 export const useAuth = () => useContext(AuthContext);
-
-
