@@ -1,6 +1,5 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../api/api";
 import { AuthContext } from "../../context/AuthContext"
 
 function Login(){
@@ -19,15 +18,7 @@ function Login(){
         setLoading(true);
 
         try{
-            const response = await api.post("/login", {
-                email,
-                password,
-                device_name: 'react_app'
-            })
-            const { token, user } = response.data;
-            localStorage.setItem("token", token);
-            localStorage.setItem("user", JSON.stringify(user))
-            login(user)
+            await login({ email, password });
             navigate("/create");
         }catch (err) {
             console.error("Erro no login: ", err);
@@ -52,9 +43,24 @@ function Login(){
     <>
 
         <form onSubmit={handleSubmit} method="post">
-            <input type="email" placeholder="E-mail" onChange={(e) => setEmail(e.target.value)}/>
-            <input type="password" placeholder="Senha" onChange={(e) => setPassword(e.target.value)}/>
-            <button type="submit">
+            <input
+                type="email"
+                placeholder="E-mail"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+            />
+            <input
+                type="password"
+                placeholder="Senha"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+            />
+            {error && <p role="alert">{error}</p>}
+            <button type="submit" disabled={loading}>
                 {loading ? "Entrando..." : "Entrar"}
             </button>
         </form>

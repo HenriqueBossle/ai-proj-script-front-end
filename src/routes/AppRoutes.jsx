@@ -7,12 +7,13 @@ import ShowAllScripts from "../pages/ShowAllScripts";
 import ScriptShow from "../pages/ScriptShow";
 import ScriptEdit from "../pages/ScriptEdit";
 import Register from "../pages/auth/Register";
+import Home from "../pages/Home";
 
 function AppRoutes(){
     return(
         <Routes>
             {/* Rotas livres */}
-            <Route path="/" element={<App />} />
+            <Route path="/" element={<Home />} />
             <Route path='login' element={<Login/>}></Route>
             <Route path='register' element={<Register/>}></Route>
 
