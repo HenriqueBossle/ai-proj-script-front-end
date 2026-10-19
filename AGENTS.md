@@ -112,11 +112,11 @@ As variáveis `VITE_*` são disponibilizadas no código executado pelo navegador
 
 A API disponibiliza os seguintes endpoints de autenticação:
 
-| Método | Endpoint | Finalidade |
-|---|---|---|
-| POST | `/register` | Cadastrar usuário |
-| POST | `/login` | Autenticar usuário |
-| POST | `/logout` | Encerrar sessão |
+| Método |  Endpoint   |      Finalidade     |
+|--------|-------------|---------------------|
+|  POST  | `/register` |  Cadastrar usuário  |
+|  POST  |  `/login`   |  Autenticar usuário |
+|  POST  |  `/logout`  |   Encerrar sessão   |
 
 Os endpoints são relativos à URL base configurada.
 
