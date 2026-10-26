@@ -91,29 +91,31 @@ function ScriptShow() {
 
   if (loading) {
     return (
-      <main className="mx-auto max-w-3xl p-6 text-center" role="status" aria-live="polite">
-        <p>Carregando roteiro...</p>
+      <main className="page-shell">
+        <section className="panel loading-panel" role="status" aria-live="polite"><div className="loading-orbit" aria-hidden="true" /><h1>Navegando pelo universo das ideias...</h1><p>Carregando roteiro</p><div className="skeleton" /><div className="skeleton" /></section>
       </main>
     );
   }
 
   if (error) {
     return (
-      <main className="mx-auto max-w-3xl space-y-4 p-6">
-        <h1 className="text-2xl font-bold">Não foi possível abrir o roteiro</h1>
-        <p className="text-red-700" role="alert">{error}</p>
-        <div className="flex flex-wrap gap-3">
+      <main className="page-shell">
+        <header className="page-heading"><span className="eyebrow">Sinal perdido</span><h1>Não foi possível abrir o roteiro</h1></header>
+        <section className="panel form-panel field-stack">
+        <p className="form-error" role="alert">{error}</p>
+        <div className="form-actions">
           <button
             type="button"
             onClick={() => setReload((count) => count + 1)}
-            className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+            className="primary-button"
           >
             Tentar novamente
           </button>
-          <Link to="/showAll" className="rounded border px-4 py-2 hover:bg-gray-50">
+          <Link to="/showAll" className="secondary-button">
             Voltar aos roteiros
           </Link>
         </div>
+        </section>
       </main>
     );
   }
@@ -125,18 +127,17 @@ function ScriptShow() {
 
   if (script.status === "pending" || script.status === "processing") {
     return (
-      <main className="mx-auto max-w-3xl space-y-4 p-8 text-center">
-        <div
-          className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"
-          aria-hidden="true"
-        />
-        <h1 className="text-2xl font-bold">Seu roteiro está sendo gerado</h1>
-        <p className="text-gray-600">A geração acontece em segundo plano. Esta página será atualizada automaticamente.</p>
-        <section className="rounded bg-gray-100 p-4 text-left">
-          <h2 className="font-semibold">{script.topic}</h2>
-          <p className="mt-2 text-sm text-gray-600" role="status" aria-live="polite">
+      <main className="page-shell">
+        <section className="panel loading-panel">
+        <div className="loading-orbit" aria-hidden="true" />
+        <h1>Navegando pelo universo das ideias...</h1>
+        <p>A geração acontece em segundo plano. Esta página será atualizada automaticamente.</p>
+        <div className="panel form-panel" style={{ marginTop: 24, textAlign: "left" }}>
+          <h2>{script.topic}</h2>
+          <p className="muted" role="status" aria-live="polite">
             Status: {script.status === "pending" ? "Aguardando" : "Em processamento"}
           </p>
+        </div>
         </section>
       </main>
     );
@@ -144,54 +145,62 @@ function ScriptShow() {
 
   if (script.status === "failed") {
     return (
-      <main className="mx-auto max-w-3xl space-y-4 p-6">
-        <h1 className="text-2xl font-bold text-red-700">Não foi possível gerar o roteiro</h1>
-        <p className="text-gray-700">
+      <main className="page-shell">
+        <section className="panel form-panel field-stack">
+        <h1>Não foi possível gerar o roteiro</h1>
+        <p className="form-error">
           Ocorreu uma falha durante a geração. Você pode voltar à lista e tentar novamente mais tarde.
         </p>
-        <Link to="/showAll" className="inline-block rounded border px-4 py-2 hover:bg-gray-50">
+        <Link to="/showAll" className="secondary-button">
           Voltar aos roteiros
         </Link>
+        </section>
       </main>
     );
   }
 
   if (script.status !== "done") {
     return (
-      <main className="mx-auto max-w-3xl space-y-4 p-6">
-        <h1 className="text-2xl font-bold">Status do roteiro indisponível</h1>
-        <p className="text-gray-700">A API retornou um status que esta página não reconhece.</p>
-        <Link to="/showAll" className="inline-block rounded border px-4 py-2 hover:bg-gray-50">
+      <main className="page-shell">
+        <section className="panel form-panel field-stack">
+        <h1>Status do roteiro indisponível</h1>
+        <p className="muted">A API retornou um status que esta página não reconhece.</p>
+        <Link to="/showAll" className="secondary-button">
           Voltar aos roteiros
         </Link>
+        </section>
       </main>
     );
   }
 
   return (
-    <main className="mx-auto max-w-3xl space-y-6 p-6">
-      <header className="border-b pb-4">
-        <span className="rounded bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-800">
+    <main className="page-shell">
+      <header className="result-header">
+        <span className="status-pill status-done">
           Concluído
         </span>
-        <h1 className="mt-2 text-3xl font-bold">{script.topic}</h1>
+        <h1>{script.topic}</h1>
         {hasValidCreatedAt && (
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="muted">
             Criado em: {createdAt.toLocaleString("pt-BR")}
           </p>
         )}
       </header>
 
-      <section className="space-y-4 rounded-lg bg-white p-6 shadow">
-        <h2 className="text-lg font-semibold text-gray-800">Roteiro gerado</h2>
-        <div className="whitespace-pre-wrap break-words rounded border bg-gray-50 p-4 leading-relaxed text-gray-800">
+      <section className="panel result-panel">
+        <h2>Roteiro gerado</h2>
+        <div className="result-content">
           {script.generated_content || "O roteiro foi concluído, mas não há conteúdo disponível."}
         </div>
       </section>
-
-      <Link to="/showAll" className="inline-block rounded border px-4 py-2 hover:bg-gray-50">
+      <div className="card-actions">
+      <Link to="/showAll" className="secondary-button" >
         Voltar aos roteiros
       </Link>
+      <Link to={`/edit/${script.id}`} className="secondary-button" >
+          Editar
+      </Link>
+      </div>
     </main>
   );
 }

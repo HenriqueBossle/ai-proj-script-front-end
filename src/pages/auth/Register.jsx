@@ -44,7 +44,8 @@ function Register() {
     };
 
     return (
-        <main>
+        <main className="panel auth-panel">
+            <span className="eyebrow">Comece sua jornada</span>
             <h1>Criar conta</h1>
             <form onSubmit={handleSubmit}>
                 <label htmlFor="name">Nome</label>
@@ -95,9 +96,9 @@ function Register() {
                     required
                 />
 
-                {error && <p role="alert">{error}</p>}
+                {error && <p className="form-error" role="alert">{error}</p>}
 
-                <button type="submit" disabled={loading}>
+                <button type="submit" disabled={loading} className="primary-button">
                     {loading ? "Criando a conta..." : "Criar conta"}
                 </button>
             </form>

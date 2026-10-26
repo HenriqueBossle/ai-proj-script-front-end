@@ -1,82 +1,91 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../api/api";
 
-function ScriptCreate(){
-    const [topic, setTopic] = useState("");
-    const [sourceText, setSourceText] = useState("");
-    const [styleText, setStyleText] = useState("");
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate()
+function ScriptCreate() {
+  const [topic, setTopic] = useState("");
+  const [sourceText, setSourceText] = useState("");
+  const [styleText, setStyleText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-        try {
-        const response = await api.post('/scripts', {
-          topic,
-          source_text: sourceText,
-          style_text: styleText,
-        });
+    try {
+      const response = await api.post('/scripts', {
+        topic,
+        source_text: sourceText,
+        style_text: styleText,
+      });
 
-        const scriptId = response.data.data.id;
+      const scriptId = response.data.data.id;
 
-        navigate(`/show/${scriptId}`);
-        } catch (error) {
-          console.error('Erro ao criar roteiro:', error);
-          alert('Ocorreu um erro ao iniciar a geração de roteiro.');
-        } finally {
-          setLoading(false);
-        }
-    };
+      navigate(`/show/${scriptId}`);
+    } catch (error) {
+      console.error('Erro ao criar roteiro:', error);
+      alert('Ocorreu um erro ao iniciar a geração de roteiro.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return(
-        <>
-        <form onSubmit={handleSubmit} className="max-w-xl mx-auto p-4 space-y-4">
-      <h2 className="text-xl font-bold">Criar Novo Roteiro com IA</h2>
-      
-      <div>
-        <label className="block font-medium">Tema do roteiro</label>
-        <input 
-          type="text" 
-          value={topic} 
-          onChange={(e) => setTopic(e.target.value)} 
-          className="w-full border p-2 rounded"
-          required
-        />
-      </div>
+  return (
+    <main className="page-shell">
+      <header className="page-heading">
+        <span className="eyebrow">Laboratório de criação</span>
+        <h1>Uma ideia, uma nova órbita.</h1>
+        <p>Defina o tema, forneça os fatos autorizados e indique como a história deve soar.</p>
+      </header>
 
-      <div>
-        <label className="block font-medium">Texto de fonte (Source Text)</label>
-        <textarea 
-          value={sourceText} 
-          onChange={(e) => setSourceText(e.target.value)} 
-          className="w-full border p-2 rounded h-32"
-          required
-        />
-      </div>
+      <form onSubmit={handleSubmit} className="panel form-panel field-stack">
+        <div className="field">
+          <label htmlFor="topic">Tema do roteiro</label>
+          <p className="field-hint">O assunto e o objetivo do vídeo.</p>
+          <input
+            id="topic"
+            type="text"
+            value={topic}
+            onChange={(e) => setTopic(e.target.value)}
+            placeholder="Ex.: Como os telescópios revelam galáxias distantes"
+            required
+          />
+        </div>
 
-      <div>
-        <label className="block font-medium">Estilo de Referência (Style Text)</label>
-        <textarea 
-          value={styleText} 
-          onChange={(e) => setStyleText(e.target.value)} 
-          className="w-full border p-2 rounded h-32"
-          required
-        />
-      </div>
+        <div className="field">
+          <label htmlFor="sourceText">Fontes e fatos</label>
+          <p className="field-hint">A base factual que deve orientar o roteiro. Inclua textos ou dados relevantes.</p>
+          <textarea
+            id="sourceText"
+            value={sourceText}
+            onChange={(e) => setSourceText(e.target.value)}
+            placeholder="Cole aqui os fatos e materiais de referência..."
+            required
+          />
+        </div>
 
-      <button 
-        type="submit" 
-        disabled={loading}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
-      >
-        {loading ? 'Enviando para a fila...' : 'Gerar Roteiro'}
-      </button>
-    </form>
-    </>
-    )
+        <div className="field">
+          <label htmlFor="styleText">Base de escrita</label>
+          <p className="field-hint">Uma referência de voz, ritmo e estilo — não uma fonte de fatos.</p>
+          <textarea
+            id="styleText"
+            value={styleText}
+            onChange={(e) => setStyleText(e.target.value)}
+            placeholder="Descreva ou cole uma amostra do estilo desejado..."
+            required
+          />
+        </div>
+
+        <div className="form-actions">
+          <button type="submit" disabled={loading} className="primary-button">
+            <span aria-hidden="true">✦</span>{loading ? 'Enviando para a fila...' : 'Gerar roteiro'}
+          </button>
+          <Link to="/showAll" className="text-button">Ver todos os roteiros já gerados</Link>
+        </div>
+      </form>
+    </main>
+  );
 }
 
-export default ScriptCreate
+export default ScriptCreate;

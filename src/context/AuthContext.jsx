@@ -4,7 +4,7 @@ import api from "../api/api";
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }){
-    const [autheticated, setAuthenticated] = useState(false);
+    const [authenticated, setAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -94,6 +94,7 @@ export function AuthProvider({ children }){
     return (
         <AuthContext.Provider
             value={{
+                authenticated,
                 setAuthenticated,
                 user,
                 loading,
