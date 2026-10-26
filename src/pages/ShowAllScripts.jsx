@@ -92,25 +92,26 @@ function ShowAllScripts() {
   };
 
   return (
-    <main className="mx-auto w-full max-w-5xl space-y-6 p-4 text-left sm:p-6">
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b pb-5">
+    <main className="page-shell">
+      <header className="page-heading card-topline">
         <div>
-          <h1 className="m-0 text-3xl font-bold">Meus roteiros</h1>
-          <p className="mt-2 text-gray-600">Acompanhe e gerencie os roteiros que você criou.</p>
+          <span className="eyebrow">Seu espaço de criação</span>
+          <h1>Missões anteriores</h1>
+          <p>Acompanhe e gerencie os roteiros que você criou.</p>
         </div>
         <Link
           to="/create"
-          className="rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="primary-button"
         >
           Criar roteiro
         </Link>
       </header>
 
       {error && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded border border-red-200 bg-red-50 p-4 text-red-800" role="alert">
+        <div className="notice-error" role="alert">
           <p>{error}</p>
           {!loading && (
-            <button type="button" onClick={() => loadScripts()} className="rounded border border-red-300 px-3 py-1.5 font-medium hover:bg-red-100">
+            <button type="button" onClick={() => loadScripts()} className="secondary-button">
               Tentar novamente
             </button>
           )}
@@ -118,50 +119,58 @@ function ShowAllScripts() {
       )}
 
       {loading ? (
-        <p className="py-12 text-center text-gray-600" role="status" aria-live="polite">Carregando seus roteiros...</p>
+        <section className="panel loading-panel" role="status" aria-live="polite"><div className="loading-orbit" aria-hidden="true" /><h1>Mapeando suas missões...</h1><p>Carregando seus roteiros</p></section>
       ) : error ? null : scripts.length === 0 ? (
-        <section className="space-y-3 rounded-lg border border-dashed p-8 text-center sm:p-12">
-          <h2 className="text-xl font-semibold">Você ainda não criou roteiros</h2>
-          <p className="text-gray-600">Comece informando o assunto, os fatos de referência e o estilo desejado.</p>
-          <Link to="/create" className="inline-block rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
+        <section className="panel empty-state">
+          <svg viewBox="0 0 160 128" fill="none" aria-hidden="true">
+            <circle cx="80" cy="64" r="43" stroke="#7c3aed" strokeOpacity=".38" />
+            <ellipse cx="80" cy="64" rx="66" ry="22" transform="rotate(-24 80 64)" stroke="#22d3ee" strokeOpacity=".7" />
+            <circle cx="80" cy="64" r="24" fill="#292052" stroke="#a78bfa" />
+            <circle cx="72" cy="57" r="5" fill="#f472b6" />
+            <circle cx="89" cy="72" r="3" fill="#22d3ee" />
+            <path d="M31 30l2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5ZM128 88l2 4 4 2-4 1-2 5-2-5-4-1 4-2 2-4Z" fill="#fbbf24" />
+          </svg>
+          <h2>Você ainda não criou roteiros</h2>
+          <p>Comece informando o assunto, os fatos de referência e o estilo desejado.</p>
+          <Link to="/create" className="primary-button">
             Criar meu primeiro roteiro
           </Link>
         </section>
       ) : (
-        <ul className="space-y-4">
+        <ul className="script-list">
           {scripts.map((script) => {
             const label = statusLabels[script.status] || "Status indisponível";
             const date = formatDate(script.created_at);
 
             return (
-              <li key={script.id} className="rounded-lg border bg-white p-4 shadow-sm sm:p-5">
-                <article className="space-y-4">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div className="min-w-0 flex-1">
-                      <h2 className="break-words text-xl font-semibold">{script.topic || "Roteiro sem título"}</h2>
-                      {date && <p className="mt-1 text-sm text-gray-500">Criado em {date}</p>}
+              <li key={script.id} className="panel script-card">
+                <article>
+                  <div className="card-topline">
+                    <div>
+                      <h2>{script.topic || "Roteiro sem título"}</h2>
+                      {date && <p className="muted">Criado em {date}</p>}
                     </div>
-                    <span className="rounded border px-3 py-1 text-sm font-medium" role="status">
+                    <span className={`status-pill status-${script.status}`} role="status">
                       {label}
                     </span>
                   </div>
 
                   {script.status === "failed" && (
-                    <p className="text-sm text-red-700">A geração não foi concluída. Você pode editar o roteiro para solicitar uma nova geração.</p>
+                    <p className="form-error">A geração não foi concluída. Você pode editar o roteiro para solicitar uma nova geração.</p>
                   )}
 
-                  <div className="flex flex-wrap gap-2 border-t pt-4">
-                    <Link to={`/show/${script.id}`} className="rounded border px-3 py-2 text-sm font-medium hover:bg-gray-50">
+                  <div className="card-actions">
+                    <Link to={`/show/${script.id}`} className="secondary-button">
                       Ver roteiro
                     </Link>
-                    <Link to={`/edit/${script.id}`} className="rounded border px-3 py-2 text-sm font-medium hover:bg-gray-50">
+                    <Link to={`/edit/${script.id}`} className="secondary-button">
                       Editar
                     </Link>
                     <button
                       type="button"
                       onClick={() => handleDelete(script)}
                       disabled={deletingId === script.id}
-                      className="rounded border border-red-300 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:cursor-wait disabled:opacity-60"
+                      className="danger-button"
                     >
                       {deletingId === script.id ? "Excluindo..." : "Excluir"}
                     </button>

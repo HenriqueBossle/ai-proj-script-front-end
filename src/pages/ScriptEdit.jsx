@@ -133,89 +133,90 @@ function ScriptEdit() {
 
   if (loading) {
     return (
-      <main className="mx-auto max-w-2xl p-6 text-center" role="status" aria-live="polite">
-        <p>Carregando roteiro para edição...</p>
+      <main className="page-shell">
+        <section className="panel loading-panel" role="status" aria-live="polite"><div className="loading-orbit" aria-hidden="true" /><h1>Preparando sua missão...</h1><p>Carregando roteiro para edição</p></section>
       </main>
     );
   }
 
   return (
-    <main className="mx-auto max-w-2xl p-4 sm:p-6">
-      <div className="mb-6 flex items-center justify-between gap-3">
+    <main className="page-shell">
+      <div className="page-heading card-topline">
         <div>
-          <h1 className="text-2xl font-bold">Editar roteiro</h1>
-          <p className="text-sm text-gray-600">Atualize os dados do roteiro e solicite uma nova geração.</p>
+          <span className="eyebrow">Ajuste de trajetória</span>
+          <h1>Editar roteiro</h1>
+          <p>Atualize os dados do roteiro e solicite uma nova geração.</p>
         </div>
-        <Link to={`/show/${scriptId}`} className="rounded border px-3 py-2 text-sm hover:bg-gray-50">
+        <Link to={`/show/${scriptId}`} className="secondary-button">
           Voltar
         </Link>
       </div>
 
       {error && (
-        <div className="mb-4 rounded border border-red-200 bg-red-50 p-3 text-red-700" role="alert">
+        <div className="notice-error" role="alert">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-5 rounded-lg border bg-white p-4 shadow-sm sm:p-6">
-        <div>
-          <label htmlFor="topic" className="mb-1 block font-medium text-gray-700">
+      <form onSubmit={handleSubmit} className="panel form-panel field-stack">
+        <div className="field">
+          <label htmlFor="topic">
             Tema do roteiro
           </label>
+          <p className="field-hint">O assunto e o objetivo do vídeo.</p>
           <input
             id="topic"
             type="text"
             value={topic}
             onChange={(event) => setTopic(event.target.value)}
-            className="w-full rounded border p-2.5 outline-none focus:border-blue-500"
             aria-invalid={Boolean(fieldErrors.topic)}
             required
           />
-          {fieldErrors.topic && <p className="mt-1 text-sm text-red-600">{fieldErrors.topic}</p>}
+          {fieldErrors.topic && <p className="form-error">{fieldErrors.topic}</p>}
         </div>
 
-        <div>
-          <label htmlFor="sourceText" className="mb-1 block font-medium text-gray-700">
+        <div className="field">
+          <label htmlFor="sourceText">
             Texto de fonte
           </label>
+          <p className="field-hint">A base factual autorizada para esta geração.</p>
           <textarea
             id="sourceText"
             value={sourceText}
             onChange={(event) => setSourceText(event.target.value)}
-            className="h-32 w-full rounded border p-2.5 outline-none focus:border-blue-500"
             aria-invalid={Boolean(fieldErrors.source_text)}
             required
           />
-          {fieldErrors.source_text && <p className="mt-1 text-sm text-red-600">{fieldErrors.source_text}</p>}
+          {fieldErrors.source_text && <p className="form-error">{fieldErrors.source_text}</p>}
         </div>
 
-        <div>
-          <label htmlFor="styleText" className="mb-1 block font-medium text-gray-700">
+        <div className="field">
+          <label htmlFor="styleText">
             Referência de estilo
           </label>
+          <p className="field-hint">A referência de estilo orienta a escrita, não os fatos.</p>
           <textarea
             id="styleText"
             value={styleText}
             onChange={(event) => setStyleText(event.target.value)}
-            className="h-32 w-full rounded border p-2.5 outline-none focus:border-blue-500"
             aria-invalid={Boolean(fieldErrors.style_text)}
             required
           />
-          {fieldErrors.style_text && <p className="mt-1 text-sm text-red-600">{fieldErrors.style_text}</p>}
+          {fieldErrors.style_text && <p className="form-error">{fieldErrors.style_text}</p>}
         </div>
 
-        <div className="flex flex-wrap gap-3">
+        <div className="form-actions">
           <button
             type="submit"
             disabled={saving}
-            className="rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="primary-button"
           >
             {saving ? "Salvando..." : "Salvar alterações"}
           </button>
 
           <Link
             to={`/show/${scriptId}`}
-            className="rounded border px-4 py-2 font-medium text-gray-700 hover:bg-gray-50"
+            className="secondary-button"
           >
             Cancelar
           </Link>

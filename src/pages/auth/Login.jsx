@@ -42,8 +42,12 @@ function Login(){
     return(
     <>
 
-        <form onSubmit={handleSubmit} method="post">
+        <form onSubmit={handleSubmit} method="post" className="panel auth-panel">
+            <span className="eyebrow">Bem-vindo de volta</span>
+            <h1>Entrar na sua órbita</h1>
+            <label htmlFor="login-email">E-mail</label>
             <input
+                id="login-email"
                 type="email"
                 placeholder="E-mail"
                 autoComplete="email"
@@ -51,7 +55,9 @@ function Login(){
                 onChange={(e) => setEmail(e.target.value)}
                 required
             />
+            <label htmlFor="login-password">Senha</label>
             <input
+                id="login-password"
                 type="password"
                 placeholder="Senha"
                 autoComplete="current-password"
@@ -59,8 +65,8 @@ function Login(){
                 onChange={(e) => setPassword(e.target.value)}
                 required
             />
-            {error && <p role="alert">{error}</p>}
-            <button type="submit" disabled={loading}>
+            {error && <p className="form-error" role="alert">{error}</p>}
+            <button type="submit" disabled={loading} className="primary-button">
                 {loading ? "Entrando..." : "Entrar"}
             </button>
         </form>
