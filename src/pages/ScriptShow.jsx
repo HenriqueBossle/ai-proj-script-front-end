@@ -193,10 +193,14 @@ function ScriptShow() {
           {script.generated_content || "O roteiro foi concluído, mas não há conteúdo disponível."}
         </div>
       </section>
-
-      <Link to="/showAll" className="secondary-button" style={{ marginTop: 20 }}>
+      <div className="card-actions">
+      <Link to="/showAll" className="secondary-button" >
         Voltar aos roteiros
       </Link>
+      <Link to={`/edit/${script.id}`} className="secondary-button" >
+          Editar
+      </Link>
+      </div>
     </main>
   );
 }
