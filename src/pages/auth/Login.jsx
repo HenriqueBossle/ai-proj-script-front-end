@@ -21,7 +21,6 @@ function Login(){
             await login({ email, password });
             navigate("/create");
         }catch (err) {
-            console.error("Erro no login: ", err);
             if(err.response?.status === 422){
                 const errors = err.response.data?.errors;
                 if (errors?.email) {
@@ -29,8 +28,12 @@ function Login(){
                 }else {
                     setError("Verifique os dados informados.");
                 }
+            }else if(err.response?.status === 419){
+                setError("A proteção CSRF recusou o login. Confira a configuração do Sanctum e do domínio do frontend na API.");
             }else if(err.response?.status === 429){
                 setError("Muitas tentativas de Login.")
+            }else if(err.response?.status >= 500){
+                setError("A API encontrou um erro ao preparar o login. Confira a configuração do Sanctum, CORS e arquivo .env no backend.");
             }else{
                 setError("Ocorreu um erro inesperado ao logar.")
             }

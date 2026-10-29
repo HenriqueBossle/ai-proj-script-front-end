@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import api from "../api/api";
+import api, { initializeCsrfCookie } from "../api/api";
 
 export const AuthContext = createContext();
 
@@ -47,6 +47,7 @@ export function AuthProvider({ children }){
     };
 
     const login = async ({ email, password }) => {
+        await initializeCsrfCookie();
         const response = await api.post("/login", {
             email,
             password,
@@ -63,6 +64,7 @@ export function AuthProvider({ children }){
     };
 
     const register = async (userData) => {
+        await initializeCsrfCookie();
         const response = await api.post("/register", {
             ...userData,
             device_name: "react_app",
