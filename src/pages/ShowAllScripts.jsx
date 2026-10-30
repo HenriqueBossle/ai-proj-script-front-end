@@ -96,7 +96,7 @@ function ShowAllScripts() {
       <header className="page-heading card-topline">
         <div>
           <span className="eyebrow">Seu espaço de criação</span>
-          <h1>Missões anteriores</h1>
+          <h1>Roteiros anteriores</h1>
           <p>Acompanhe e gerencie os roteiros que você criou.</p>
         </div>
         <Link
@@ -119,7 +119,7 @@ function ShowAllScripts() {
       )}
 
       {loading ? (
-        <section className="panel loading-panel" role="status" aria-live="polite"><div className="loading-orbit" aria-hidden="true" /><h1>Mapeando suas missões...</h1><p>Carregando seus roteiros</p></section>
+        <section className="panel loading-panel" role="status" aria-live="polite"><div className="loading-orbit" aria-hidden="true" /><h1>Carregando seus roteiros...</h1></section>
       ) : error ? null : scripts.length === 0 ? (
         <section className="panel empty-state">
           <svg viewBox="0 0 160 128" fill="none" aria-hidden="true">
