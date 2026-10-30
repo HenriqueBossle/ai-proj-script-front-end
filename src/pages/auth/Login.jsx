@@ -47,7 +47,7 @@ function Login(){
 
         <form onSubmit={handleSubmit} method="post" className="panel auth-panel">
             <span className="eyebrow">Bem-vindo de volta</span>
-            <h1>Entrar na sua órbita</h1>
+            <h1>Entrar na sua conta</h1>
             <label htmlFor="login-email">E-mail</label>
             <input
                 id="login-email"
