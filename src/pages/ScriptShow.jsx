@@ -355,7 +355,7 @@ function ScriptShowContent({ scriptId }) {
                 placeholder="Descreva as alterações desejadas, preservando o contexto do roteiro."
               />
               <p className="field-hint" id="reviewInstructionCount" aria-live="polite">
-                {instruction.length}/20.000 caracteres
+                {instruction.length}/600 caracteres
               </p>
             </div>
 
