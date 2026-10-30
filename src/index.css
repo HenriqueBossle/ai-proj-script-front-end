@@ -128,7 +128,7 @@ a { color: inherit; }
 @keyframes shimmer { to { background-position: -200% 0; } }
 .auth-panel { width: min(460px, calc(100% - 36px)); margin: 10vh auto; padding: 30px; }
 .auth-panel h1 { margin: 0 0 24px; font: 600 2rem 'Space Grotesk',sans-serif; }
-.auth-panel form { display: grid; gap: 14px; }
+.auth-panel form, form.auth-panel { display: grid; gap: 14px; }
 .auth-panel label { margin-bottom: -8px; color: var(--space-text); font-weight: 600; }
 .auth-panel button { margin-top: 7px; }
 

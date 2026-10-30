@@ -19,7 +19,7 @@ function Navbar() {
   return (
     <nav className="space-navbar" aria-label="Navegação principal">
       <div className="navbar-inner">
-        <NavLink className="space-brand" to={isAuthenticated ? "/create" : "/"} aria-label="Roteiro Cósmico — início">
+        <NavLink className="space-brand" to="/" aria-label="Roteiro Cósmico — início">
           <span className="brand-mark" aria-hidden="true">✦</span>
           <span>Script<span className="brand-accent">AI</span></span>
         </NavLink>

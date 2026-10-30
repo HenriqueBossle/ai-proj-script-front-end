@@ -1,151 +1,77 @@
-# TASKS.md — AI Script Generator Frontend
+# TASKS.md — frontend ScriptAI
 
-## 1. Objetivo
+Este backlog descreve o estado observado no frontend e os próximos trabalhos. Os itens concluídos refletem o código atual; não representam uma certificação de ponta a ponta com a API em execução.
 
-Este documento organiza o desenvolvimento e a validação do frontend React do AI Script Generator, seguindo as regras do AGENTS.md e o contrato da API Laravel.
+## Já implementado
 
-O foco do MVP é permitir:
+### Base e autenticação
 
-- cadastro e login de usuários;
-- autenticação com token Bearer;
-- listagem, criação, visualização, edição e exclusão de roteiros;
-- acompanhamento do processamento assíncrono;
-- tratamento de erros e estados de carregamento.
+- [x] Aplicação React/Vite com React Router, `AuthProvider`, navbar e páginas públicas.
+- [x] Login e cadastro com inicialização de cookie CSRF do Sanctum.
+- [x] Envio de `device_name: "react_app"` nos pedidos de login e cadastro.
+- [x] Armazenamento local do token e dos dados básicos do usuário.
+- [x] Consulta a `GET /user` ao iniciar com token existente.
+- [x] Logout que remove o estado local mesmo quando a chamada remota falha.
+- [x] Proteção das rotas de roteiro pela presença de token no `localStorage`.
 
----
+### Roteiros
 
-## 2. Estado atual do projeto
+- [x] Criar roteiro em `POST /scripts` com `topic`, `source_text` e `style_text`.
+- [x] Listar roteiros em `GET /scripts`, com estado vazio e nova tentativa após erro.
+- [x] Consultar um roteiro em `GET /scripts/{script}` e exibir `generated_content`.
+- [x] Exibir os estados `pending`, `processing`, `done` e `failed`, com fallback para status desconhecido.
+- [x] Consultar a API a cada três segundos enquanto o roteiro está em processamento; abortar consultas ao sair da página.
+- [x] Editar dados em `PUT /scripts/{script}` e solicitar nova geração.
+- [x] Excluir em `DELETE /scripts/{script}` após confirmação por `window.confirm`.
+- [x] Solicitar revisão contextual em `POST /scripts/{script}/revise` e acompanhar o resultado sem substituir o conteúdo anterior durante o processamento.
 
-Com base na estrutura atual do repositório, o frontend já possui:
+### Interface
 
-- configuração base do React + Vite;
-- cliente HTTP centralizado em `src/services/api.js`;
-- contexto de autenticação em `src/context/AuthContext.jsx`;
-- rotas e proteção de páginas em `src/routes/`;
-- páginas de autenticação e de roteiros já estruturadas;
-- dependências principais do projeto já instaladas (`react`, `react-router-dom`, `axios`).
+- [x] Página inicial com chamadas para cadastro/login e navegação baseada na sessão.
+- [x] Labels, mensagens de carregamento/erro e layout responsivo nas telas principais.
+- [x] Exibição do conteúdo gerado como texto, sem HTML injetado.
 
-Ainda é necessário confirmar o comportamento real da API e completar/validar os fluxos do MVP conforme o contrato do backend.
+## Pendências
 
----
+### Autenticação e sessão — prioridade alta
 
-## 3. Backlog de tarefas
+- [ ] Diferenciar `401` de falha de rede ao restaurar sessão; atualmente qualquer falha em `GET /user` remove os dados locais.
+- [ ] Centralizar ou padronizar o tratamento de `401` para limpar a sessão inválida e encaminhar o usuário ao login, evitando redirecionamentos repetidos.
+- [ ] Fazer a rota protegida considerar o estado `loading` do contexto, em vez de decidir somente pela presença imediata do token.
+- [ ] Revisar o estado de autenticação consumido pela navbar, que atualmente lê o token diretamente do `localStorage`.
 
-### Fase 1 — Base de autenticação e sessão
+### Formulários e erros — prioridade alta
 
-- [ ] Confirmar a URL da API via variável de ambiente `VITE_API_URL`.
-- [ ] Centralizar requisições e autenticação no serviço HTTP.
-- [ ] Validar o fluxo de login com `email`, `password` e `device_name`.
-- [ ] Validar o fluxo de cadastro com `name`, `email`, `password`, `password_confirmation` e `device_name`.
-- [ ] Garantir que o token seja salvo e recuperado de forma consistente.
-- [ ] Tratar `401 Unauthorized` limpando a sessão inválida e redirecionando para login.
-- [ ] Evitar loops de redirecionamento ao falhar autenticação.
-- [ ] Implementar logout limpando local state mesmo quando a API falhar.
-- [ ] Manter estado de autenticação consistente entre páginas.
+- [ ] No formulário de criação, substituir `alert()` e o log do erro por mensagens acessíveis na página e tratar erros de validação `422`.
+- [ ] Alinhar a obrigatoriedade de `style_text`: a API permite valor nulo, mas criação e edição no frontend marcam o campo como obrigatório.
+- [ ] Aplicar na interface os limites da API: `topic` até 255 caracteres, `source_text` e `style_text` até 20.000 caracteres.
+- [ ] Associar mensagens de validação a cada campo também no cadastro e login, preservando os valores digitados quando houver erro recuperável.
+- [ ] Revisar a diferenciação de falhas de rede, `401`, `403`, `404`, `409`, `422`, `429`, `503` e `5xx` nas telas que fazem requisições.
 
-### Fase 2 — Gerenciamento de roteiros
+### Estrutura HTTP — prioridade média
 
-- [ ] Listar roteiros do usuário autenticado em `GET /scripts`.
-- [ ] Exibir estado vazio quando não houver roteiros.
-- [ ] Criar roteiro com `topic`, `source_text` e `style_text`.
-- [ ] Validar campos obrigatórios e erros do backend (`422`).
-- [ ] Exibir carregamento e desabilitar botão durante o envio.
-- [ ] Evitar requisições duplicadas ao criar ou editar um roteiro.
-- [ ] Consultar um roteiro específico em `GET /scripts/{script}`.
-- [ ] Exibir o conteúdo gerado em `generated_content` quando o status for `done`.
-- [ ] Atualizar roteiro com reprocessamento quando necessário.
-- [ ] Excluir roteiro com confirmação antes da ação.
+- [ ] Resolver a duplicidade dos clientes Axios: páginas e contexto usam `src/api/api.js`, enquanto `src/services/api.js` contém outro cliente sem uso atual.
+- [ ] Ao consolidar clientes, preservar a base `VITE_API_URL`, o Bearer token e o fluxo CSRF/XSRF de Sanctum.
 
-### Fase 3 — Geração assíncrona e polling
+### Validação e manutenção — prioridade média
 
-- [ ] Tratar corretamente os estados: `pending`, `processing`, `done` e `failed`.
-- [ ] Exibir indicador visual para roteiros em processamento.
-- [ ] Informar ao usuário que a geração está em andamento.
-- [ ] Polling ou consulta por estado compatível com o backend, sem execução concorrente duplicada.
-- [ ] Interromper polling quando o status chegar a `done` ou `failed`.
-- [ ] Cancelar consultas ao desmontar o componente ou sair da página.
-- [ ] Tratar falhas temporárias sem criar ciclos infinitos.
-- [ ] Exibir mensagem segura para falhas de geração e usar `error_message` apenas quando apropriado.
-- [ ] Fallback seguro para estados desconhecidos retornados pela API.
+- [ ] Adicionar testes para autenticação, proteção de rotas, operações CRUD, polling, revisão e principais respostas de erro.
+- [ ] Validar os fluxos com o backend em execução; o repositório não possui atualmente script de testes automatizados.
+- [ ] Rever os estilos/arquivos remanescentes do template Vite (`src/App.css` e assets do template) antes de removê-los, verificando imports e uso.
 
-### Fase 4 — UX, acessibilidade e validação
+## Contrato usado pelo frontend
 
-- [ ] Preservar valores preenchidos após erro recuperável.
-- [ ] Exibir mensagens de erro próximas aos campos relevantes.
-- [ ] Diferenciar erros de validação, autenticação, rede e servidor.
-- [ ] Aplicar labels acessíveis e foco visível nos formulários.
-- [ ] Manter consistência visual e textos em português brasileiro.
-- [ ] Garantir responsividade para desktop e mobile.
-- [ ] Usar HTML semântico e evitar `alert()` como solução padrão.
-- [ ] Apresentar estados de carregamento, sucesso, vazio e erro.
+As rotas correspondem às declaradas em `../ai-proj-script-api/routes/api.php`: autenticação (`/register`, `/login`, `/user`, `/logout`) e recursos protegidos de `/scripts`, incluindo `POST /scripts/{script}/revise`.
 
-### Fase 5 — Tratamento de erros HTTP
+O backend valida `topic` como obrigatório com até 255 caracteres; `source_text` como obrigatório com até 20.000; `style_text` como opcional/nulo com até 20.000; e `instruction` de revisão como obrigatório com até 20.000. Confirme novamente o contrato no código do backend antes de alterar essas informações.
 
-- [ ] Tratar `401` como sessão inválida e solicitar login.
-- [ ] Tratar `403` como operação não permitida.
-- [ ] Tratar `404` de recurso ausente ou inacessível.
-- [ ] Apresentar erros de validação para `422`.
-- [ ] Informar limite de requisições para `429` quando aplicável.
-- [ ] Apresentar erro de servidor para `5xx`.
-- [ ] Informar falhas de rede/CORS sem expor detalhes internos.
+## Comandos disponíveis
 
-### Fase 6 — Testes e validação final
+Conforme `package.json`:
 
-- [ ] Executar lint, caso configurado.
-- [ ] Executar build de produção.
-- [ ] Validar rotas protegidas e públicas.
-- [ ] Testar cadastro e login bem-sucedidos.
-- [ ] Testar credenciais inválidas.
-- [ ] Validar listagem vazia e com roteiros.
-- [ ] Validar criação e acompanhamento da geração.
-- [ ] Validar geração concluída e falha na geração.
-- [ ] Validar edição e regeneração.
-- [ ] Validar exclusão de roteiros.
-- [ ] Revisar logs temporários e código não utilizado.
-- [ ] Confirmar que não há URLs fixas de API espalhadas no código.
+```bash
+npm run lint
+npm run build
+```
 
----
-
-## 4. Critérios de conclusão
-
-Uma tarefa só pode ser considerada concluída quando:
-
-- o comportamento respeitar o contrato real da API;
-- a autenticação e as rotas protegidas estiverem consistentes;
-- os estados de carregamento, sucesso, vazio e erro forem tratados;
-- o código respeitar as convenções do projeto;
-- a aplicação continuar responsiva e acessível;
-- os testes e verificações aplicáveis forem executados e registrados.
-
----
-
-## 5. Checklist de verificação antes de fechar uma tarefa
-
-- [ ] Releitura do AGENTS.md e README.
-- [ ] Consulta ao contrato da API do backend.
-- [ ] Verificação das rotas e componentes impactados.
-- [ ] Validação de lint/build quando disponível.
-- [ ] Revisão do diff para remover código temporário.
-- [ ] Registro claro do que foi implementado e do que foi validado.
-
----
-
-## 6. Prioridade sugerida
-
-### Prioridade alta
-
-1. autenticação e sessão;
-2. listagem e criação de roteiros;
-3. visualização e processamento assíncrono;
-4. gestão de edição/exclusão.
-
-### Prioridade média
-
-5. validações e mensagens de erro;
-6. tratamento de 401/403/404/422/429/5xx;
-7. acessibilidade e UX refinada.
-
-### Prioridade baixa
-
-8. revisão e refinamento final;
-9. build, lint e QA geral.
+Também existem `npm run dev` e `npm run preview`. Não há comando `test` configurado no momento. Ao concluir uma tarefa, registre no resumo quais verificações foram realmente executadas e se houve falhas.
