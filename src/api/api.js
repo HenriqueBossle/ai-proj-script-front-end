@@ -20,6 +20,19 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+api.interceptors.response.use(
+    response => response,
+    error => {
+        if (error.response?.status === 429) {
+            console.warn(
+                "Limite de solicitações atingido."
+            );
+        }
+
+        return Promise.reject(error);
+    }
+);
+
 export const initializeCsrfCookie = () => {
     const csrfCookieUrl = new URL("/sanctum/csrf-cookie", api.defaults.baseURL);
     return api.get(csrfCookieUrl.toString());
