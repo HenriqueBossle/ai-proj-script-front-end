@@ -217,7 +217,7 @@ function ScriptShowContent({ scriptId }) {
   if (isLoading && !currentScript) {
     return (
       <main className="page-shell">
-        <section className="panel loading-panel" role="status" aria-live="polite"><div className="loading-orbit" aria-hidden="true" /><h1>Navegando pelo universo das ideias...</h1><p>Carregando roteiro</p><div className="skeleton" /><div className="skeleton" /></section>
+        <section className="panel loading-panel" role="status" aria-live="polite"><div className="loading-orbit" aria-hidden="true" /><h1>Carregando roteiro...</h1><div className="skeleton" /><div className="skeleton" /></section>
       </main>
     );
   }

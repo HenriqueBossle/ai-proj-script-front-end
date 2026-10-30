@@ -134,7 +134,7 @@ function ScriptEdit() {
   if (loading) {
     return (
       <main className="page-shell">
-        <section className="panel loading-panel" role="status" aria-live="polite"><div className="loading-orbit" aria-hidden="true" /><h1>Preparando sua missão...</h1><p>Carregando roteiro para edição</p></section>
+        <section className="panel loading-panel" role="status" aria-live="polite"><div className="loading-orbit" aria-hidden="true" /><h1>Carregando roteiro para edição...</h1></section>
       </main>
     );
   }
