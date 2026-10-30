@@ -63,7 +63,7 @@ Este backlog descreve o estado observado no frontend e os próximos trabalhos. O
 
 As rotas correspondem às declaradas em `../ai-proj-script-api/routes/api.php`: autenticação (`/register`, `/login`, `/user`, `/logout`) e recursos protegidos de `/scripts`, incluindo `POST /scripts/{script}/revise`.
 
-O backend valida `topic` como obrigatório com até 255 caracteres; `source_text` como obrigatório com até 20.000; `style_text` como opcional/nulo com até 20.000; e `instruction` de revisão como obrigatório com até 20.000. Confirme novamente o contrato no código do backend antes de alterar essas informações.
+O backend valida `topic` como obrigatório com até 255 caracteres; `source_text` como obrigatório com até 20.000; `style_text` como opcional/nulo com até 20.000; e `instruction` de revisão como obrigatório com até 600. Confirme novamente o contrato no código do backend antes de alterar essas informações.
 
 ## Comandos disponíveis
 

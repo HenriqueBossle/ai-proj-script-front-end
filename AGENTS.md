@@ -51,7 +51,7 @@ Endpoints atualmente declarados em `../ai-proj-script-api/routes/api.php`:
 
 O login exige `email`, `password` e `device_name`; o cadastro exige `name`, `email`, `password`, `password_confirmation` e `device_name`. O frontend usa `device_name: "react_app"`.
 
-Criação e atualização usam `topic`, `source_text` e `style_text`. No backend consultado, `topic` é obrigatório e limitado a 255 caracteres, `source_text` é obrigatório e limitado a 20.000 caracteres, e `style_text` é opcional/nulo e limitado a 20.000 caracteres. A interface atualmente marca os três campos como obrigatórios e não aplica todos esses limites; considere isso ao revisar formulários. Revisão usa `instruction`, obrigatória e limitada a 20.000 caracteres.
+Criação e atualização usam `topic`, `source_text` e `style_text`. No backend consultado, `topic` é obrigatório e limitado a 255 caracteres, `source_text` é obrigatório e limitado a 20.000 caracteres, e `style_text` é opcional/nulo e limitado a 20.000 caracteres. A interface atualmente marca os três campos como obrigatórios e não aplica todos esses limites; considere isso ao revisar formulários. Revisão usa `instruction`, obrigatória e limitada a 600 caracteres.
 
 O recurso de roteiro expõe `id`, `user_id`, `topic`, `source_text`, `style_text`, `generated_content`, `status`, `error_message`, `created_at` e `updated_at`. Não envie `user_id` para definir propriedade e não renderize conteúdo não confiável como HTML.
 
