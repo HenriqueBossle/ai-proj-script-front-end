@@ -28,15 +28,17 @@ function Register() {
             await register({ name, email, password, password_confirmation: passwordConfirmation });
             navigate("/create");
         } catch (err) {
-            console.error("Erro no cadastro:", err);
-
             const validationErrors = err.response?.data?.errors;
             if (validationErrors) {
                 setError(Object.values(validationErrors).flat().join(" "));
+            } else if (err.response?.status === 419) {
+                setError("A proteção CSRF recusou o cadastro. Confira a configuração do Sanctum e do domínio do frontend na API.");
             } else if (err.response?.status === 429) {
                 setError("Muitas tentativas. Aguarde um momento e tente novamente.");
+            } else if (err.response?.status >= 500) {
+                setError("A API encontrou um erro ao preparar o cadastro. Confira a configuração do Sanctum, CORS e arquivo .env no backend.");
             } else {
-                setError(err.response?.data?.message ?? "Ocorreu um erro inesperado ao criar sua conta.");
+                setError("Não foi possível criar sua conta. Verifique os dados e tente novamente.");
             }
         } finally {
             setLoading(false);
