@@ -28,12 +28,16 @@ function Login(){
                 }else {
                     setError("Verifique os dados informados.");
                 }
+            }else if(err.response?.status === 401){
+                setError("A API recusou a autenticação. Confira seus dados e tente novamente.");
             }else if(err.response?.status === 419){
-                setError("A proteção CSRF recusou o login. Confira a configuração do Sanctum e do domínio do frontend na API.");
+                setError("A API retornou erro 419. Verifique a configuração do servidor.");
             }else if(err.response?.status === 429){
                 setError("Muitas tentativas de Login.")
             }else if(err.response?.status >= 500){
                 setError("A API encontrou um erro ao preparar o login. Confira a configuração do Sanctum, CORS e arquivo .env no backend.");
+            }else if(!err.response){
+                setError("Não foi possível conectar à API. Verifique a URL, a rede e a configuração de CORS.");
             }else{
                 setError("Ocorreu um erro inesperado ao logar.")
             }

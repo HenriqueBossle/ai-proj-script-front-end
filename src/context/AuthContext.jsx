@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import api, { initializeCsrfCookie } from "../api/api";
+import api from "../api/api";
 
 export const AuthContext = createContext();
 
@@ -18,19 +18,38 @@ export function AuthProvider({ children }){
             return;
         }
 
+        // Keep the cached identity available while validating the token after reload.
+        try {
+            const cachedUser = localStorage.getItem("user");
+            if (cachedUser) {
+                setUser(JSON.parse(cachedUser));
+                setAuthenticated(true);
+            }
+        } catch {
+            localStorage.removeItem("user");
+        }
+
         try {
             const response = await api.get("/user");
 
             setUser(response.data);
             setAuthenticated(true);
         } catch (error) {
-            console.error("Token inválido:", error);
+            if (import.meta.env.DEV) {
+                console.warn("Falha ao restaurar sessão", {
+                    status: error.response?.status ?? null,
+                    code: error.code ?? null,
+                    hasResponse: Boolean(error.response),
+                });
+            }
 
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
-
-            setUser(null);
-            setAuthenticated(false);
+            // A falha de rede não prova que o token é inválido. Só 401 encerra a sessão.
+            if (error.response?.status === 401) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+                setUser(null);
+                setAuthenticated(false);
+            }
         } finally {
             setLoading(false);
         }
@@ -47,13 +66,12 @@ export function AuthProvider({ children }){
     };
 
     const login = async ({ email, password }) => {
-        await initializeCsrfCookie();
         const response = await api.post("/login", {
             email,
             password,
             device_name: "react_app",
         });
-        const { token, user: authenticatedUser } = response.data;
+        const { token, user: authenticatedUser } = response.data ?? {};
 
         if (!token || !authenticatedUser) {
             throw new Error("A resposta do login não contém os dados de autenticação esperados.");
@@ -64,15 +82,20 @@ export function AuthProvider({ children }){
     };
 
     const register = async (userData) => {
-        await initializeCsrfCookie();
         const response = await api.post("/register", {
-            ...userData,
+            name: userData.name,
+            email: userData.email,
+            password: userData.password,
+            password_confirmation: userData.password_confirmation,
             device_name: "react_app",
         });
-        const { token, user: registeredUser } = response.data;
+
+        const { token, user: registeredUser } = response.data ?? {};
 
         if (!token || !registeredUser) {
-            throw new Error("A resposta do cadastro não contém os dados de autenticação esperados.");
+            throw new Error(
+                "A resposta do cadastro não contém os dados de autenticação esperados."
+            );
         }
 
         localStorage.setItem("token", token);
@@ -83,7 +106,13 @@ export function AuthProvider({ children }){
         try {
             await api.post("/logout");
         } catch (error) {
-            console.error("Erro no logout:", error);
+            if (import.meta.env.DEV) {
+                console.warn("Falha ao encerrar sessão na API", {
+                    status: error.response?.status ?? null,
+                    code: error.code ?? null,
+                    hasResponse: Boolean(error.response),
+                });
+            }
         } finally {
             localStorage.removeItem("token");
             localStorage.removeItem("user");

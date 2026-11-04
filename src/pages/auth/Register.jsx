@@ -28,17 +28,23 @@ function Register() {
             await register({ name, email, password, password_confirmation: passwordConfirmation });
             navigate("/create");
         } catch (err) {
-            const validationErrors = err.response?.data?.errors;
-            if (validationErrors) {
-                setError(Object.values(validationErrors).flat().join(" "));
-            } else if (err.response?.status === 419) {
-                setError("A proteção CSRF recusou o cadastro. Confira a configuração do Sanctum e do domínio do frontend na API.");
-            } else if (err.response?.status === 429) {
+            const status = err.response?.status;
+            const data = err.response?.data;
+
+            if (status === 422 && data?.errors) {
+                setError(Object.values(data.errors).flat().join(" "));
+            } else if (status === 401) {
+                setError("A API recusou a autenticação. Confira os dados e tente novamente.");
+            } else if (status === 419) {
+                setError("A API retornou erro 419. Verifique a configuração do servidor.");
+            } else if (status === 429) {
                 setError("Muitas tentativas. Aguarde um momento e tente novamente.");
-            } else if (err.response?.status >= 500) {
-                setError("A API encontrou um erro ao preparar o cadastro. Confira a configuração do Sanctum, CORS e arquivo .env no backend.");
+            } else if (status >= 500) {
+                setError("A API encontrou um erro interno. Tente novamente mais tarde.");
+            } else if (!err.response) {
+                setError("Não foi possível conectar à API. Verifique a URL, a rede e a configuração de CORS.");
             } else {
-                setError("Não foi possível criar sua conta. Verifique os dados e tente novamente.");
+                setError(data?.message || "Não foi possível criar sua conta. Verifique os dados e tente novamente.");
             }
         } finally {
             setLoading(false);

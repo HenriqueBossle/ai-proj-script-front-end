@@ -32,7 +32,7 @@ O projeto não possui um script de testes automatizados configurado. Use uma ver
 
 Defina `VITE_API_URL` no arquivo `.env` local, incluindo o prefixo `/api`.
 
-O frontend usa essa URL como base para as chamadas da API. O cliente em [`src/api/api.js`](./src/api/api.js) inclui o token Bearer quando existe sessão e configura credenciais/XSRF; login e cadastro inicializam o cookie CSRF do Sanctum antes da requisição. Não coloque tokens, senhas ou chaves privadas em variáveis `VITE_*`, pois elas são incorporadas ao código enviado ao navegador.
+O frontend usa essa URL como base para as chamadas da API. O cliente em [`src/api/api.js`](./src/api/api.js) inclui o token Bearer nas rotas protegidas. Login e cadastro são públicos e não enviam token anterior. A autenticação usa Sanctum Personal Access Tokens, sem fluxo de cookies/CSRF no frontend. Não coloque tokens, senhas ou chaves privadas em variáveis `VITE_*`, pois elas são incorporadas ao código enviado ao navegador.
 
 O arquivo `.env` é ignorado pelo Git. Não existe atualmente um `.env.example` no repositório.
 
@@ -52,7 +52,8 @@ A proteção no navegador verifica a existência do token em `localStorage`; a a
 
 ## Fluxos disponíveis
 
-- Cadastro e login enviam `device_name: "react_app"` e guardam o token e os dados básicos do usuário no `localStorage`.
+- Cadastro e login enviam `device_name: "react_app"`, validam a resposta `{ token, user }` e guardam o token e os dados básicos do usuário no `localStorage`.
+- Na recarga, `GET /user` valida o token; uma resposta `401` limpa a sessão local, enquanto falhas de rede mantêm os dados locais para permitir nova tentativa.
 - A criação envia `topic`, `source_text` e `style_text` para `POST /scripts`.
 - A listagem consulta `GET /scripts`; a visualização consulta `GET /scripts/{script}`.
 - A edição carrega o roteiro e envia os campos para `PUT /scripts/{script}`. A API recoloca o roteiro em processamento para gerar uma nova versão.
