@@ -7,7 +7,7 @@ Este backlog descreve o estado observado no frontend e os próximos trabalhos. O
 ### Base e autenticação
 
 - [x] Aplicação React/Vite com React Router, `AuthProvider`, navbar e páginas públicas.
-- [x] Login e cadastro com inicialização de cookie CSRF do Sanctum.
+- [x] Login e cadastro com Sanctum Personal Access Tokens, sem inicialização de cookie CSRF.
 - [x] Envio de `device_name: "react_app"` nos pedidos de login e cadastro.
 - [x] Armazenamento local do token e dos dados básicos do usuário.
 - [x] Consulta a `GET /user` ao iniciar com token existente.
@@ -35,7 +35,8 @@ Este backlog descreve o estado observado no frontend e os próximos trabalhos. O
 
 ### Autenticação e sessão — prioridade alta
 
-- [ ] Diferenciar `401` de falha de rede ao restaurar sessão; atualmente qualquer falha em `GET /user` remove os dados locais.
+- [x] Diferenciar `401` de falha de rede ao restaurar sessão; falhas de rede mantêm os dados locais e `401` limpa a sessão.
+- [x] Excluir o Bearer Token anterior de login e cadastro e registrar diagnósticos sem payloads ou credenciais.
 - [ ] Centralizar ou padronizar o tratamento de `401` para limpar a sessão inválida e encaminhar o usuário ao login, evitando redirecionamentos repetidos.
 - [ ] Fazer a rota protegida considerar o estado `loading` do contexto, em vez de decidir somente pela presença imediata do token.
 - [ ] Revisar o estado de autenticação consumido pela navbar, que atualmente lê o token diretamente do `localStorage`.
